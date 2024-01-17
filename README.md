@@ -14,5 +14,5 @@ After:
 Step 1: Install Python\
 Step 2: Open command prompt and type `cd C:\the\folder\with\the\spritesheet`\
 Step 3: Type `pip install pillow`\
-Step 4: Edit the settings at the top of separator.py to what you need\
+Step 4: Copy separator.py to the folder with the spritesheet and edit the settings in the file to what you need\
 Step 5: In command prompt, type `python separator.py`
