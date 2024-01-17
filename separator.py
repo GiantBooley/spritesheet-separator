@@ -1,7 +1,8 @@
-#spritesheet separator v1 by giantbooley
+#spritesheet separator v2 by giantbooley
 
 from PIL import Image
 import os
+import math
 
 #settings start
 spritesheetFileName = "spritesheet.png"
@@ -9,9 +10,12 @@ name = "Mushroom"
 alphaThreshold = 60 # pixels with alpha below this number will be deleted (0-255)
 floodFillMaxSteps = 10000 # max number of steps the flood fill algorithm uses
 imageNumberStartFromOne = True #if true then the numbers on image filenames start from 1 instead of 0
+makeDivisibleByFour = True # if true resize to size divisible by 4
+resizeAlgorithm = Image.BICUBIC # bicubic for smooth edges, nearest for sharp edges
+edgeMargin = 8 #pixel gap inbetween the image and edge of the image (if divisible by 4 is true then make this an even number)
 #settings end
 
-im = Image.open(spritesheetFileName)
+im = Image.open(spritesheetFileName).convert("RGBA")
 width, height = im.size
 alphaMask = Image.new("RGBA", (width, height));
 px = im.load()
@@ -23,7 +27,7 @@ if not os.path.exists("output/" + name):
 # create alpha mask
 for x in range(width):
     for y in range(height):
-        if px[x, y][3] < alphaThreshold:
+        if px[x, y][3] <= alphaThreshold:
             apx[x, y] = (0, 0, 0, 255)
         else:
             apx[x, y] = (255, 0, 0, 255)
@@ -31,8 +35,8 @@ for x in range(width):
             
 k = 1 if imageNumberStartFromOne else 0
 
-for x in range(width):
-    for y in range(height):
+for y in range(height):
+    for x in range(width):
         if apx[x, y] == (255, 0, 0, 255):
             left = x
             right = x
@@ -68,6 +72,8 @@ for x in range(width):
                     top = min([top, floodPixelList[j][1]])
                     bottom = max([bottom, floodPixelList[j][1]])
                     del floodPixelList[j]
+            bottom += 1
+            right += 1
             croppedObject = im.copy()
             copx = croppedObject.load()
             for xa in range(width):
@@ -76,6 +82,15 @@ for x in range(width):
                         copx[xa, ya] = (0, 0, 0, 0)
             if left == right or top == bottom:
                 continue
-            croppedObject.crop((left, top, right, bottom)).save("output/" + name + "/" + name + str(k) + ".png")
+            croppedImage = croppedObject.crop((left, top, right, bottom))
+            bg = Image.new("RGBA", (edgeMargin * 2 + right - left, edgeMargin * 2 + bottom - top), (0, 0, 0, 0))
+            bg.paste(croppedImage, (edgeMargin, edgeMargin))
+            
+            if makeDivisibleByFour:
+                oldWidth = edgeMargin * 2 + right - left
+                oldHeight = edgeMargin * 2 + bottom - top
+                newSize = (math.ceil(oldWidth / 4) * 4, math.ceil(oldHeight / 4) * 4)
+                bg = bg.resize(newSize, resizeAlgorithm)
+            bg.save("output/" + name + "/" + name + str(k) + ".png")
             print("Saved \"" + "output/" + name + "/" + name + str(k) + ".png\"")
             k += 1
