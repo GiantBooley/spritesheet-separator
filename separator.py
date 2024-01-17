@@ -1,4 +1,4 @@
-#spritesheet separator v2 by giantbooley
+#spritesheet separator v3 by giantbooley
 
 from PIL import Image
 import os
@@ -7,12 +7,11 @@ import math
 #settings start
 spritesheetFileName = "spritesheet.png"
 name = "Mushroom"
-alphaThreshold = 60 # pixels with alpha below this number will be deleted (0-255)
+alphaThreshold = 0 # pixels with alpha below this number will be deleted (0-255)
 floodFillMaxSteps = 10000 # max number of steps the flood fill algorithm uses
 imageNumberStartFromOne = True #if true then the numbers on image filenames start from 1 instead of 0
 makeDivisibleByFour = True # if true resize to size divisible by 4
-resizeAlgorithm = Image.BICUBIC # bicubic for smooth edges, nearest for sharp edges
-edgeMargin = 8 #pixel gap inbetween the image and edge of the image (if divisible by 4 is true then make this an even number)
+edgeMargin = 8 #pixel gap inbetween the image and edge of the image
 #settings end
 
 im = Image.open(spritesheetFileName).convert("RGBA")
@@ -83,14 +82,17 @@ for y in range(height):
             if left == right or top == bottom:
                 continue
             croppedImage = croppedObject.crop((left, top, right, bottom))
-            bg = Image.new("RGBA", (edgeMargin * 2 + right - left, edgeMargin * 2 + bottom - top), (0, 0, 0, 0))
-            bg.paste(croppedImage, (edgeMargin, edgeMargin))
-            
+            oldWidth = edgeMargin * 2 + right - left
+            oldHeight = edgeMargin * 2 + bottom - top
             if makeDivisibleByFour:
-                oldWidth = edgeMargin * 2 + right - left
-                oldHeight = edgeMargin * 2 + bottom - top
-                newSize = (math.ceil(oldWidth / 4) * 4, math.ceil(oldHeight / 4) * 4)
-                bg = bg.resize(newSize, resizeAlgorithm)
+                newWidth = math.ceil(oldWidth / 4) * 4
+                newHeight = math.ceil(oldHeight / 4) * 4
+            else:
+                newWidth = oldWidth
+                newHeight = oldHeight
+            bg = Image.new("RGBA", (newWidth, newHeight), (0, 0, 0, 0))
+            bg.paste(croppedImage, (round(newWidth / 2 - (right - left) / 2), round(newHeight / 2 - (bottom - top) / 2)))
+            
             bg.save("output/" + name + "/" + name + str(k) + ".png")
             print("Saved \"" + "output/" + name + "/" + name + str(k) + ".png\"")
             k += 1
