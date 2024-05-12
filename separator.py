@@ -1,4 +1,4 @@
-#spritesheet separator v3 by giantbooley
+#spritesheet separator v4 by giantbooley
 
 from PIL import Image
 import os
@@ -9,9 +9,10 @@ spritesheetFileName = "spritesheet.png"
 name = "Mushroom"
 alphaThreshold = 0 # pixels with alpha below this number will be deleted (0-255)
 floodFillMaxSteps = 10000 # max number of steps the flood fill algorithm uses
-imageNumberStartFromOne = True #if true then the numbers on image filenames start from 1 instead of 0
+imageStartNumber = 1 #image start number
 makeDivisibleByFour = True # if true resize to size divisible by 4
 edgeMargin = 8 #pixel gap inbetween the image and edge of the image
+minWidthHeight = 10 # minimum number for width and height for island to be valid
 #settings end
 
 im = Image.open(spritesheetFileName).convert("RGBA")
@@ -22,8 +23,8 @@ apx = alphaMask.load()
 
 if not os.path.exists("output/" + name):
     os.makedirs("output/" + name)
-
 # create alpha mask
+
 for x in range(width):
     for y in range(height):
         if px[x, y][3] <= alphaThreshold:
@@ -32,8 +33,7 @@ for x in range(width):
             apx[x, y] = (255, 0, 0, 255)
             
             
-k = 1 if imageNumberStartFromOne else 0
-
+k = imageStartNumber
 for y in range(height):
     for x in range(width):
         if apx[x, y] == (255, 0, 0, 255):
@@ -73,6 +73,8 @@ for y in range(height):
                     del floodPixelList[j]
             bottom += 1
             right += 1
+            if right - left < minWidthHeight or bottom - top < minWidthHeight:
+                continue;
             croppedObject = im.copy()
             copx = croppedObject.load()
             for xa in range(width):
