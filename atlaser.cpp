@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) { // spritesheet, name, startnum, makedivisible
 	
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			if (data[(y * width + x) * 4 + 3] > static_cast<unsigned char>(0)) { // check if has alpha at x y
+			if (data[(y * width + x) * 4 + 3] > alphaThreshold) { // check if has alpha at x y
 				//cout << "starting island (" << x << ", " << y << ")" << endl;
 				int left = x;
 				int right = x;
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) { // spritesheet, name, startnum, makedivisible
 							int newX = ecks + offset.x;
 							int newY = why + offset.y;
 							if (ecks > 0 && ecks < width - 1 && why > 0 && why < height - 1 &&
-								data[(newY * width + newX) * 4 + 3] > static_cast<unsigned char>(0) && // check if new position has alpha
+								data[(newY * width + newX) * 4 + 3] > alphaThreshold && // check if new position has alpha
 								currentIslandMask[newY * width + newX] == static_cast<unsigned char>(0) // check if the pixel hasnt been added yet
 							) { // check if flood pixel x isnt 0 and the pixel to the lfet of it has alpha and the pixel ot the left of it hasnt been checked
 								floodPixelList.push_back({newX, newY});
