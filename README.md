@@ -6,7 +6,7 @@ Separates spritesheets into images based on transparency
 Before:
 
 ![before](https://raw.githubusercontent.com/GiantBooley/spritesheet-separator/refs/heads/main/before.png)
-After:
+After (30 seconds c++ version 3 hours python version):
 
 ![after](https://raw.githubusercontent.com/GiantBooley/spritesheet-separator/refs/heads/main/afterdasd.png)
 ---
