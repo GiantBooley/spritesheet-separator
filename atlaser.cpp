@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) { // spritesheet, name, startnum, makedivisible
 
 		for (const auto & entry : filesystem::directory_iterator(inputFolderName)) {
 			int width, height, colorChannels;
-			string path = entry.path();
+			string path = entry.path().u8string();
 			string fileName = path.substr(inputFolderName.length() + 1);
 			unsigned char* data = stbi_load(path.c_str(), &width, &height, &colorChannels, 0);
 			if (!data) {
