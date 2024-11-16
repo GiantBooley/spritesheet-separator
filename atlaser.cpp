@@ -29,7 +29,7 @@ struct Vec2 {
 
 int main(int argc, char* argv[]) { // spritesheet, name, startnum, makedivisible, edgeMargin, alphathreshold, minsize
 
-	if (string(argv[1]) == "separate") {
+	if (argc > 1 && string(argv[1]) == "separate") {
 		//settings start
 		string spritesheetFileName = argv[2];
 		string name = argv[3];
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) { // spritesheet, name, startnum, makedivisible
 		}
 		free(data);
 		free(currentIslandMask);
-	} else if (string(argv[1]) == "image") {
+	} else if (argc > 1 && string(argv[1]) == "image") {
 		string inputFolderName = argv[2];
 		string outputFolderName = argv[3];
 		unsigned char alphaThreshold = (unsigned char)min(max(stoi(argv[4]), 0), 255);
